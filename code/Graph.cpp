@@ -2,6 +2,9 @@
 #include "Node.h"
 #include <iostream>
 #include "Auxiliary.h"
+#include <algorithm>
+
+const double INFTY = std::numeric_limits<double>::max();
 
 Graph::Graph(std::string graph_name) : name(graph_name) { numVertices = 0; }
 
@@ -26,11 +29,22 @@ std::vector<std::string> Graph::getVerticesNames() const {
     }
     return names_list;
 }
-void Graph::printGraph() const {
-    std::cout << "Graph name: " << name << "\n";
+
+std::vector<std::vector<double>> Graph::getAdjacencyMatrix() const {
+    std::vector<std::vector<double>> adjMatrix;
     for (Node* vertex : vertices) {
-        vertex->printNode();
+        std::vector<double> row;
+        std::string name = vertex->getName(); 
+        std::map<Node*, double> ngbh_list = vertex->getNeighbours();
+        for (Node* another_vertex : vertices) {
+            std::string another_name = another_vertex->getName();
+            if (name == another_name) { row.push_back(0); }
+            else if (ngbh_list.find(another_vertex) == ngbh_list.end()) { row.push_back(INFTY); }
+            else { row.push_back(ngbh_list[another_vertex]); }
+        }
+        adjMatrix.push_back(row);
     }
+    return adjMatrix;
 }
 
 bool Graph::ifVertexPresent(const Node* vertex) const {
@@ -40,13 +54,13 @@ bool Graph::ifVertexPresent(const Node* vertex) const {
     return false;
 }
 
-bool Graph::ifVertexPresent(const std::string vertex_name) const {
+Node* Graph::ifVertexPresent(const std::string vertex_name) const {
     for (Node* vertex : vertices) {
         if (vertex->getName() == vertex_name) {
-            return true;
+            return vertex;
         }
     }
-    return false;
+    return nullptr;
 }
 
 void Graph::addVertex(Node& vertex) {
@@ -55,11 +69,13 @@ void Graph::addVertex(Node& vertex) {
     }
 }
 
-void Graph::addVertex(const std::string& vertex_name) {
+Node* Graph::addVertex(const std::string& vertex_name) {
     if (!ifVertexPresent(vertex_name)) {
         Node* vertex = new Node(vertex_name);
         vertices.push_back(vertex);
+        return vertex;
     }
+    return nullptr;
 }
 
 bool Graph::ifVerticesPresent(std::string start_vertex, std::string destination_vertex) const {
@@ -95,7 +111,7 @@ bool Graph::ifEdgeExists(const Node* start_vertex, Node* destination_vertex) {
     return true;
 }
 
-void Graph::addEdge(std::string start_vertex, std::string destination_vertex) {
+void Graph::addEdge(const std::string& start_vertex, const std::string& destination_vertex) {
     if (ifVerticesPresent(start_vertex, destination_vertex) && !ifEdgeExists(start_vertex, destination_vertex)) {
         Node* first_vertex = findVertexByName(start_vertex);
         Node* second_vertex = findVertexByName(destination_vertex);
@@ -103,7 +119,7 @@ void Graph::addEdge(std::string start_vertex, std::string destination_vertex) {
     }
 }
 
-void Graph::addEdge(std::string start_vertex, std::string destination_vertex, double weight) {
+void Graph::addEdge(const std::string& start_vertex, const std::string& destination_vertex, double weight) {
     if (ifVerticesPresent(start_vertex, destination_vertex) && !ifEdgeExists(start_vertex, destination_vertex)) {
         Node* first_vertex = findVertexByName(start_vertex);
         Node* second_vertex = findVertexByName(destination_vertex);
@@ -111,7 +127,25 @@ void Graph::addEdge(std::string start_vertex, std::string destination_vertex, do
     }
 }
 
-void Graph::removeEdge(std::string start_vertex, std::string destination_vertex) { 
+void Graph::addBiEdge(const std::string& start_vertex, const std::string& destination_vertex) {
+    if (ifVerticesPresent(start_vertex, destination_vertex) && !ifEdgeExists(start_vertex, destination_vertex) && !ifEdgeExists(destination_vertex, start_vertex)) {
+        Node* first_vertex = findVertexByName(start_vertex);
+        Node* second_vertex = findVertexByName(destination_vertex);
+        first_vertex->addNeighbour(*second_vertex);
+        second_vertex->addNeighbour(*first_vertex);
+    }
+}
+
+void Graph::addBiEdge(const std::string& start_vertex, const std::string& destination_vertex, double weight) {
+    if (ifVerticesPresent(start_vertex, destination_vertex) && !ifEdgeExists(start_vertex, destination_vertex) && !ifEdgeExists(destination_vertex, start_vertex)) {
+        Node* first_vertex = findVertexByName(start_vertex);
+        Node* second_vertex = findVertexByName(destination_vertex);
+        first_vertex->addNeighbour(*second_vertex, weight);
+        second_vertex->addNeighbour(*first_vertex, weight);
+    }
+}
+
+void Graph::removeEdge(const std::string& start_vertex, const std::string& destination_vertex) {
     if (ifEdgeExists(start_vertex, destination_vertex)) {
         Node* first_vertex = findVertexByName(start_vertex);
         Node* second_vertex = findVertexByName(destination_vertex);
@@ -149,4 +183,16 @@ void Graph::removeVertex(Node& main_vertex) {
         removeEdge(vertex_address, vertex);
     }
     vertices.erase(std::remove(vertices.begin(), vertices.end(), vertex_address), vertices.end());
+}
+
+void Graph::printGraph() const {
+    std::cout << "Graph name: " << name << "\n";
+    for (Node* vertex : vertices) {
+        vertex->printNode();
+    }
+}
+
+void Graph::printAdjacencyMatrix() const {
+    std::vector< std::vector<double>> matrix = getAdjacencyMatrix();
+    Auxiliary::print_matrix(matrix);
 }
