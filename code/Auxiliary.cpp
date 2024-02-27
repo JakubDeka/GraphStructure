@@ -1,6 +1,5 @@
 #include "Auxiliary.h"
-#include <map>
-#include <iostream>
+
 
 bool Auxiliary::compare_sorted_lists(const std::vector<std::string>& list, const std::vector<std::string>& element) {
     return 1;

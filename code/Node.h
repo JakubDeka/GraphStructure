@@ -22,9 +22,21 @@ public:
     void printNode() const;
     std::vector<Node*> getNbhdList() const;
     bool operator==(const Node& other) const;
-private:
+protected:
     std::string name;
     std::map<Node*, double> neighbours;
+};
+
+class LocatedNode : public Node {
+public:
+    LocatedNode(const std::string&);
+    LocatedNode(const std::string&, double x, double y);
+    ~LocatedNode();
+    double getx();
+    double gety();
+private:
+    double x_coordinate;
+    double y_coordinate;
 };
 
 #endif

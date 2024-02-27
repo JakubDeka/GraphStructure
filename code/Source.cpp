@@ -1,5 +1,6 @@
 #include "Auxiliary.h"
 #include "Graph_algorithms.h"
+//#include <iostream>
 
 
 Graph prep1Graph() {
@@ -54,7 +55,14 @@ int main() {
     //Graph graph2 = prep2Graph();
     graph1.printGraph();
     //graph2.printGraph();
-    std::vector<Node*> from_a_to_k = Dijkstra(graph1, "a", "k");
-    std::vector<std::vector<double>> okey = Floyd_Warshall(graph1);
-    Auxiliary::print_matrix(okey);
+    //std::vector<Node*> from_a_to_k = Dijkstra(graph1, "a", "k");
+    //std::vector<std::vector<double>> okey = Floyd_Warshall(graph1);
+    //Auxiliary::print_matrix(okey);
+    std::vector<std::string> vertices_names = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k" };
+    LocatedGraph graph2("Hello");
+    std::cout << graph2.getName() << "\n";
+    graph2.addVertex("siemka", 1, 2);
+    graph2.printGraph();
+    Graph* graph3 = generateRandomGraph("new graph", 6, 0.4, 1);
+    graph3->printGraph();
 }

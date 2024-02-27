@@ -1,6 +1,64 @@
 #include "Graph_algorithms.h"
+#include <random>
 
 const double INFTY = std::numeric_limits<double>::max();
+
+Graph* generateRandomGraph(const std::string& graph_name, int no_vertices, double edge_density, bool bidirectional_edges) {
+    Graph* graph = new Graph(graph_name);
+    int vertex = 1;
+    while (vertex <= no_vertices) {
+        graph->addVertex(std::to_string(vertex));
+        ++vertex;
+    }
+    std::srand((unsigned int)std::time(nullptr));
+    std::mt19937 rng(std::rand());
+    std::uniform_int_distribution<int> distribution(0, no_vertices - 1);
+    int no_added_edges = 0;
+    int no_total_edges = no_vertices * (no_vertices - 1) * edge_density;
+    if (bidirectional_edges) { no_total_edges = no_total_edges / 2; }
+    while (no_added_edges < no_total_edges) {
+        Node* first_vertex = graph->getVertices()[distribution(rng)];
+        Node* second_vertex = graph->getVertices()[distribution(rng)];
+        if (first_vertex == second_vertex || graph->ifEdgeExists(first_vertex, second_vertex)) {
+            continue;
+        }
+        std::cout << "Edges umber = " << no_added_edges << "\n";
+        if (bidirectional_edges) { graph->addBiEdge(first_vertex->getName(), second_vertex->getName()); }
+        else { graph->addEdge(first_vertex->getName(), second_vertex->getName()); }
+        ++no_added_edges;
+    }
+    return graph;
+}
+
+Graph* generateRandomLocatedGraph(const std::string& graph_name, int no_vertices, double edge_density, double weight_low_limit, double weight_up_limit, bool bidirectional_edges) {
+    Graph* graph = new LocatedGraph(graph_name);
+    int vertex = 1;
+    while (vertex <= no_vertices) {
+        graph->addVertex(std::to_string(vertex));
+        ++vertex;
+    }
+    std::srand((unsigned int)std::time(nullptr));
+    std::mt19937 rng(std::rand());
+    std::uniform_int_distribution<int> distribution(0, no_vertices - 1);
+    int no_added_edges = 0;
+    int no_total_edges = no_vertices * (no_vertices - 1) * edge_density;
+    if (bidirectional_edges) { no_total_edges = no_total_edges / 2; }
+    while (no_added_edges < no_total_edges) {
+        Node* first_vertex = graph->getVertices()[distribution(rng)];
+        Node* second_vertex = graph->getVertices()[distribution(rng)];
+        if (first_vertex == second_vertex || graph->ifEdgeExists(first_vertex, second_vertex)) {
+            continue;
+        }
+        std::cout << "Edges umber = " << no_added_edges << "\n";
+        graph->addEdge(first_vertex->getName(), second_vertex->getName());
+        ++no_added_edges;
+    }
+    return graph;
+}
+
+Graph* generateRandomGraph(std::string graph_name, const std::string* no_vertices, double edge_density) {
+    return nullptr;
+}
 
 Node* argminNgbs(const std::map<Node*, double>& vertex_map) {
     double min = std::numeric_limits<double>::max();

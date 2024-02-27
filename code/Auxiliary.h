@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 #include <list>
+#include <map>
+#include <iostream>
 
 class Auxiliary
 {

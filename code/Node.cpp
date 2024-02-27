@@ -83,3 +83,13 @@ std::vector<Node*> Node::getNbhdList() const {
 bool Node::operator==(const Node& other) const {
     return this->name == other.name;
 }
+
+LocatedNode::LocatedNode(const std::string& name) : Node(name) { x_coordinate = 0; y_coordinate = 0; }
+
+LocatedNode::LocatedNode(const std::string& name, double x, double y) : Node(name), x_coordinate(x), y_coordinate(y) {}
+
+LocatedNode::~LocatedNode() {}
+
+double LocatedNode::getx() { return x_coordinate; }
+
+double LocatedNode::gety() { return y_coordinate; }

@@ -1,8 +1,4 @@
 #include "Graph.h"
-#include "Node.h"
-#include <iostream>
-#include "Auxiliary.h"
-#include <algorithm>
 
 const double INFTY = std::numeric_limits<double>::max();
 
@@ -195,4 +191,23 @@ void Graph::printGraph() const {
 void Graph::printAdjacencyMatrix() const {
     std::vector< std::vector<double>> matrix = getAdjacencyMatrix();
     Auxiliary::print_matrix(matrix);
+}
+
+LocatedGraph::LocatedGraph(std::string name) : Graph(name) {}
+
+LocatedGraph::~LocatedGraph() {}
+
+void LocatedGraph::addVertex(LocatedNode& vertex) {
+    if (!ifVertexPresent(&vertex)) {
+        vertices.push_back(&vertex);
+    }
+}
+
+Node* LocatedGraph::addVertex(const std::string& vertex_name, double vertex_x, double vertex_y) {
+    if (!ifVertexPresent(vertex_name)) {
+        LocatedNode* vertex = new LocatedNode(vertex_name, vertex_x, vertex_y);
+        vertices.push_back(vertex);
+        return vertex;
+    }
+    return nullptr;
 }
